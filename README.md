@@ -2,6 +2,8 @@
 
 Measure size in image.
 
+<img src="https://github.com/akita11/ImageMeasure/blob/main/screenshot.png" width="200px">
+
 ## How to use
 1. Load image
 2. draw two rectangulars

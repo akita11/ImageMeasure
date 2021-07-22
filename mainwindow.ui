@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>848</width>
+    <height>669</height>
+   </rect>
+  </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>519</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QScrollBar" name="verticalScrollBar">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QScrollBar" name="horizontalScrollBar">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayoutTop">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayoutRect" stretch="0,0">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetFixedSize</enum>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayoutRect2" stretch="0,0,0,0,0">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="radioButtonRect1">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>120</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Rect1(0,0)</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEditRect1X">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="plainText">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonSetRect1X">
+            <property name="text">
+             <string>set</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEditRect1Y">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="plainText">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonSetRect1Y">
+            <property name="text">
+             <string>set</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayoutRect1">
+          <item>
+           <widget class="QRadioButton" name="radioButtonRect2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>120</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Rect2(0,0)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEditRect2X">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="plainText">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonSetRect2X">
+            <property name="text">
+             <string>set</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEditRect2Y">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="plainText">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonSetRect2Y">
+            <property name="text">
+             <string>set</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_Slider">
+        <item>
+         <widget class="QLabel" name="labelZoom">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>x1.0</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="SliderZoom">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>50</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonFileSelect">
+        <property name="text">
+         <string>Select</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonQuit">
+        <property name="text">
+         <string>Quit</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButtonQuit</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>835</x>
+     <y>596</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>779</x>
+     <y>605</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonFileSelect</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OpenFileDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>749</x>
+     <y>596</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>579</x>
+     <y>608</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SliderZoom</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSliderZoomChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>550</x>
+     <y>612</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>442</x>
+     <y>587</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonRect1</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRadiobuttonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>33</x>
+     <y>566</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>118</x>
+     <y>600</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButtonRect2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRadiobuttonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>33</x>
+     <y>613</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>verticalScrollBar</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onVerticalScrollBarChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>826</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>423</x>
+     <y>334</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalScrollBar</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onHorizontalScrollBarChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>368</x>
+     <y>517</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>362</x>
+     <y>533</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonSetRect1X</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSetRect1X()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>555</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>570</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonSetRect1Y</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSetRect1Y()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>449</x>
+     <y>550</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>501</x>
+     <y>533</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonSetRect2X</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSetRect2X()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>281</x>
+     <y>596</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>281</x>
+     <y>618</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonSetRect2Y</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSetRect2Y()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>452</x>
+     <y>607</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>451</x>
+     <y>618</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>OpenFileDialog()</slot>
+  <slot>onSliderZoomChanged(int)</slot>
+  <slot>onHorizontalScrollBarChanged(int)</slot>
+  <slot>onVerticalScrollBarChanged(int)</slot>
+  <slot>onTextboxRect1XChanged()</slot>
+  <slot>onTextboxRect1YChanged()</slot>
+  <slot>onTextboxRect2XChanged()</slot>
+  <slot>onTextboxRect2YChanged()</slot>
+  <slot>onRadiobuttonClicked()</slot>
+  <slot>onSetRect1X()</slot>
+  <slot>onSetRect1Y()</slot>
+  <slot>onSetRect2X()</slot>
+  <slot>onSetRect2Y()</slot>
+ </slots>
+</ui>

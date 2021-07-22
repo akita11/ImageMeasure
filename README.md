@@ -2,7 +2,7 @@
 
 Measure size in image.
 
-<img src="https://github.com/akita11/ImageMeasure/blob/main/screenshot.png" width="200px">
+<img src="https://github.com/akita11/ImageMeasure/blob/main/screenshot.png" width="400px">
 
 ## How to use
 1. Load image

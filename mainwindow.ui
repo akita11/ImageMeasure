@@ -73,7 +73,7 @@
          <enum>QLayout::SetFixedSize</enum>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayoutRect2" stretch="0,0,0,0,0">
+         <layout class="QHBoxLayout" name="horizontalLayoutRect2" stretch="0,0,0,0,0,0">
           <property name="sizeConstraint">
            <enum>QLayout::SetDefaultConstraint</enum>
           </property>
@@ -106,6 +106,28 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButtonRect1Color">
+            <property name="minimumSize">
+             <size>
+              <width>60</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Color</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPlainTextEdit" name="plainTextEditRect1X">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -132,6 +154,18 @@
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonSetRect1X">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
              <string>set</string>
             </property>
@@ -164,6 +198,18 @@
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonSetRect1Y">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
              <string>set</string>
             </property>
@@ -199,6 +245,28 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButtonRect2Color">
+            <property name="minimumSize">
+             <size>
+              <width>60</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Color</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPlainTextEdit" name="plainTextEditRect2X">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -225,6 +293,18 @@
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonSetRect2X">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
              <string>set</string>
             </property>
@@ -257,6 +337,18 @@
           </item>
           <item>
            <widget class="QPushButton" name="pushButtonSetRect2Y">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
              <string>set</string>
             </property>
@@ -327,6 +419,36 @@
           </property>
          </widget>
         </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>rotate[deg]</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEditRotate">
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="plainText">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </item>
       <item>
@@ -359,7 +481,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>835</x>
-     <y>596</y>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>779</x>
@@ -374,8 +496,8 @@
    <slot>OpenFileDialog()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>749</x>
-     <y>596</y>
+     <x>765</x>
+     <y>589</y>
     </hint>
     <hint type="destinationlabel">
      <x>579</x>
@@ -390,8 +512,8 @@
    <slot>onSliderZoomChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>550</x>
-     <y>612</y>
+     <x>650</x>
+     <y>583</y>
     </hint>
     <hint type="destinationlabel">
      <x>442</x>
@@ -406,8 +528,8 @@
    <slot>onRadiobuttonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>33</x>
-     <y>566</y>
+     <x>47</x>
+     <y>553</y>
     </hint>
     <hint type="destinationlabel">
      <x>118</x>
@@ -422,8 +544,8 @@
    <slot>onRadiobuttonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>33</x>
-     <y>613</y>
+     <x>47</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>399</x>
@@ -454,8 +576,8 @@
    <slot>onHorizontalScrollBarChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>368</x>
-     <y>517</y>
+     <x>380</x>
+     <y>506</y>
     </hint>
     <hint type="destinationlabel">
      <x>362</x>
@@ -470,7 +592,7 @@
    <slot>onSetRect1X()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>273</x>
+     <x>312</x>
      <y>555</y>
     </hint>
     <hint type="destinationlabel">
@@ -486,7 +608,7 @@
    <slot>onSetRect1Y()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>449</x>
+     <x>472</x>
      <y>550</y>
     </hint>
     <hint type="destinationlabel">
@@ -502,7 +624,7 @@
    <slot>onSetRect2X()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>281</x>
+     <x>320</x>
      <y>596</y>
     </hint>
     <hint type="destinationlabel">
@@ -527,6 +649,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>plainTextEditRotate</sender>
+   <signal>textChanged()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRotateChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>605</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>621</x>
+     <y>625</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonRect1Color</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRect1ColorClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>153</x>
+     <y>532</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>150</x>
+     <y>433</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonRect2Color</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onRect2ColorClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>586</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>155</x>
+     <y>623</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>OpenFileDialog()</slot>
@@ -542,5 +712,8 @@
   <slot>onSetRect1Y()</slot>
   <slot>onSetRect2X()</slot>
   <slot>onSetRect2Y()</slot>
+  <slot>onRotateChanged()</slot>
+  <slot>onRect1ColorClicked()</slot>
+  <slot>onRect2ColorClicked()</slot>
  </slots>
 </ui>

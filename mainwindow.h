@@ -35,12 +35,21 @@ private:
     QPointF rect_physical[2];
     void set_other_Rect(int index);
     void normalize_rect_size();
+    double rotate;
+    double distance(QPoint p1, QPoint p2);
+    int dragMode;
+    bool check_within(int x, int xs, int xe);
+    QColor pen_color[2];
 
 public slots:
     // 独自のスロット（ボタンを押したときに呼ばれる関数など）はここで宣言
     // https://www.qt.io/ja-jp/blog/2011/03/23/go-to-slot
     // スロット関数をここで追加しても，Designerのslotには出てこないので，編集→＋で追加
-    // このとき関数名が違っていても，エラーは出ないので注意
+    // このとき関数名が違っていると，実行時にwarningは出る（エラーは出ない）
+    // ウイジェットから右クリック→「スロットへ移動」でも関数をつくれる（関数名は決め打ちになるが，このほうが簡単）
+    // https://y-nsk.hatenablog.com/entry/color-button
+
+
     void OpenFileDialog();
     void onSliderZoomChanged(int value);
     void onRadiobuttonClicked();
@@ -50,6 +59,9 @@ public slots:
     void onSetRect1Y();
     void onSetRect2X();
     void onSetRect2Y();
+    void onRotateChanged();
+    void onRect1ColorClicked();
+    void onRect2ColorClicked();
 
 protected:
     void mousePressEvent(QMouseEvent *event);

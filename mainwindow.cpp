@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QSlider>
 #include <math.h>
+#include <QColorDialog>
 
 // ウイジェットのサイズをLayoutオブジェクト内で固定するには，sizePolicyをfixedにして，minimumとmaximumに同じ値を入れる
 //https://digirakuda.org/blog/2018/03/14/post-41/
@@ -22,11 +23,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->SliderZoom->setEnabled(false); // disable Zoom slider at initial
     index = 0;
-/*
-    imageFile = QImage("/Users/akita/Desktop/testL.jpg");
+    rotate = 0;
+    dragMode = 0;
+    pen_color[0] = Qt::red;
+    pen_color[1] = Qt::blue;
+    QPalette pal;
+    pal.setColor(QPalette::Button, pen_color[0]);
+    ui->pushButtonRect1Color->setPalette(pal);
+    pal.setColor(QPalette::Button, pen_color[1]);
+    ui->pushButtonRect2Color->setPalette(pal);
+
+    imageFile = QImage("/Users/akita/Desktop/VHX_000218a.jpg");
     fImageLoaded = true;
     ui->SliderZoom->setEnabled(true);
-*/
 }
 
 // 描画時のpaintイベント
@@ -69,10 +78,20 @@ void MainWindow::paintEvent(QPaintEvent *event){
         imageWidth = img.width(); imageHeight = img.height();
         img = img.scaled(imageWidth * mag, imageHeight * mag, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
+//        for (int i = 0; i < 100; i++) img.setPixel(i, i, pen_color[0]);
+
         // painterの拡大縮小変換
 //        QTransform matrix;
 //        matrix.scale(1, 1);
 //        painter.setWorldTransform(matrix);
+
+        // QImageの回転などの変換
+        // shttps://base64.work/so/qt/1908471
+        QPoint center = img.rect().center();
+        QTransform matrix;
+        matrix.translate(center.x(), center.y());
+        matrix.rotate(rotate);
+        img = img.transformed(matrix);
 
         // viewportとwindowの関係
         // https://runebook.dev/ja/docs/qt/coordsys
@@ -90,14 +109,17 @@ void MainWindow::paintEvent(QPaintEvent *event){
          +-----+  -> +---------+
                      +-Y-+        hScroll=0.0
                            +-Y-+  hScroll=1.0
+                          posX
          */
 //        qDebug("%d %d / %d %d / %.1f / %d %d / %d", drawingWidth, drawingHeight, imageWidth, imageHeight, mag, posX, posY, fDragging);
     }
-    painter.setPen(Qt::red);
+    // xw@Window(Y) <-> xi@Image(W*mag) -> xi = posX + xw / Y * (W*mag) -> xw = (xi - posX) * Y / (W*mag)
+    painter.setPen(pen_color[0]);
     painter.drawRect(rect_draw[0]);
-    painter.setPen(Qt::blue);
+    painter.setPen(pen_color[1]);
     painter.drawRect(rect_draw[1]);
 }
+
 
 
 // *.hで宣言した独自のスロットはここで定義
@@ -117,7 +139,21 @@ void MainWindow::OpenFileDialog()
     // https://qiita.com/kanryu/items/89812b362dfd581a4c10
 }
 
+double MainWindow::distance(QPoint p1, QPoint p2)
+{
+    return(sqrt((double)(p1.x() - p2.x()) * (p1.x() - p2.x()) + (double)(p1.y() - p2.y()) * (p1.y() - p2.y())));
+}
 
+bool MainWindow::check_within(int x, int xs, int xe)
+{
+    if (xs > xe){
+        int xt = xe; xe = xs; xs = xt;
+    }
+    if (x >= xs && x <= xe) return(true); else return(false);
+}
+
+
+#define TH_DRAG 5
 // マウスのイベントの取得(Qt4とQt5でぜんぜん違う）
 // http://dorafop.my.coocan.jp/Qt/Qt104.html
 void MainWindow::mousePressEvent(QMouseEvent *event)
@@ -125,23 +161,24 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton) {
         int drawingHeight = ui->horizontalLayout->geometry().height();
         if (event->position().y() < drawingHeight){
-            rect_draw[index].setTopLeft(event->position().toPoint());
+            //        qDebug("MousePress x=%f,y=%f", event->position().x(), event->position().y());
+            QPoint mouseP = event->position().toPoint();
+            dragMode = 0;
+            for (int i = 0; i < 2; i++){
+                int dL, dR, dT, dB;
+                dL = abs(mouseP.x() - rect_draw[i].left());
+                dR = abs(mouseP.x() - rect_draw[i].right());
+                dT = abs(mouseP.y() - rect_draw[i].top());
+                dB = abs(mouseP.y() - rect_draw[i].bottom());
+//                qDebug("%d : (%d %d) / (%d %d) - (%d %d) / %d %d %d %d", i, mouseP.x(), mouseP.y(), rect_draw[i].left(), rect_draw[i].top(), rect_draw[i].right(), rect_draw[i].bottom(), dL, dR, dT, dB);
+                if (dL < TH_DRAG && check_within(mouseP.y(), rect_draw[i].bottom(), rect_draw[i].top())) dragMode = 1 + i * 10;
+                else if (dR < TH_DRAG && check_within(mouseP.y(), rect_draw[i].bottom(), rect_draw[i].top())) dragMode = 2 + i * 10;
+                else if (dT < TH_DRAG && check_within(mouseP.x(), rect_draw[i].left(), rect_draw[i].right())) dragMode = 3 + i * 10;
+                else if (dB < TH_DRAG && check_within(mouseP.x(), rect_draw[i].left(), rect_draw[i].right())) dragMode = 4 + i * 10;
+            }
+//            qDebug("set dragMode = %d", dragMode);
+            if (dragMode == 0) rect_draw[index].setTopLeft(event->position().toPoint());
         }
-//        qDebug("MousePress x=%f,y=%f", event->position().x(), event->position().y());
-/*
-        if (index == 0){
-            ui->plainTextEditRect1X->setEnabled(true);
-            ui->plainTextEditRect1Y->setEnabled(true);
-            ui->plainTextEditRect2X->setEnabled(false);
-            ui->plainTextEditRect2Y->setEnabled(false);
-        }
-        else{
-            ui->plainTextEditRect1X->setEnabled(false);
-            ui->plainTextEditRect1Y->setEnabled(false);
-            ui->plainTextEditRect2X->setEnabled(true);
-            ui->plainTextEditRect2Y->setEnabled(true);
-        }
-*/
     }
 }
 
@@ -150,9 +187,10 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton) {
         int drawingHeight = ui->horizontalLayout->geometry().height();
         if (event->position().y() < drawingHeight){
-            rect_draw[index].setBottomRight(event->position().toPoint());
+//            if (drawMode == 0) rect_draw[index].setBottomRight(event->position().toPoint());
         }
 //        qDebug("MouseRelease x=%f,y=%f", event->position().x(), event->position().y());
+        dragMode = 0;
     }
 }
 
@@ -163,22 +201,30 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 //    qDebug("MouseMove x=%f,y=%f", event->position().x(), event->position().y());
     // QStringのフォーマットの指定
     // http://dorafop.my.coocan.jp/Qt/Qt199.html
-
     // ステータスバーに表示
     // http://memotiyou.blogspot.com/2012/03/qt-c_238.html
     ui->statusbar->showMessage(QString("(%1 %2)").arg(event->position().x()).arg(event->position().y()));
-    rect_draw[index].setBottomRight(event->position().toPoint());
-    int width = rect_draw[index].right() - rect_draw[index].left(); if (width < 0) width = -width;
-    int height = rect_draw[index].bottom() - rect_draw[index].top(); if (height < 0) height = -height;
+
+    if (dragMode == 0) rect_draw[index].setBottomRight(event->position().toPoint());
+    else if (dragMode == 1) rect_draw[0].setLeft(event->position().x());
+    else if (dragMode == 2) rect_draw[0].setRight(event->position().x());
+    else if (dragMode == 3) rect_draw[0].setTop(event->position().y());
+    else if (dragMode == 4) rect_draw[0].setBottom(event->position().y());
+    else if (dragMode == 11) rect_draw[1].setLeft(event->position().x());
+    else if (dragMode == 12) rect_draw[1].setRight(event->position().x());
+    else if (dragMode == 13) rect_draw[1].setTop(event->position().y());
+    else if (dragMode == 14) rect_draw[1].setBottom(event->position().y());
+
+
+    int width = rect_draw[index].right() - rect_draw[index].left() + 1; if (width < 0) width = -width;
+    int height = rect_draw[index].bottom() - rect_draw[index].top() + 1; if (height < 0) height = -height;
+    // note: width = xe - xs + 1
+//    qDebug("%d : %d %d %d %d / %d %d / %d %d", index, rect_draw[index].left(), rect_draw[index].top(), rect_draw[index].right(), rect_draw[index].bottom(), rect_draw[index].width(), rect_draw[index].height(), width, height);
     if (index == 0){
         ui->radioButtonRect1->setText((QString("Rect1(%1 %2)").arg(width).arg(height)));
-//        ui->plainTextEditRect1X->setPlainText(QString("%1").arg(width));
-//        ui->plainTextEditRect1Y->setPlainText(QString("%1").arg(height));
     }
     else{
         ui->radioButtonRect2->setText((QString("Rect2(%1 %2)").arg(width).arg(height)));
-//        ui->plainTextEditRect2X->setPlainText(QString("%1").arg(width));
-//        ui->plainTextEditRect2Y->setPlainText(QString("%1").arg(height));
     }
     update();
 }
@@ -270,13 +316,15 @@ void MainWindow::onSetRect1X()
 {
     rect_physical[0].setX(ui->plainTextEditRect1X->toPlainText().toDouble());
     if (rect_physical[0].x() != 0){
-        double aspect;
         normalize_rect_size();
-        qDebug("%d %d / %d %d", rect_draw[0].width(), rect_draw[0].height(), rect_draw[1].width(), rect_draw[1].height());
+/*
+        double aspect;
         if (rect_draw[0].height() != 0) aspect = (double)rect_draw[0].width() / (double)rect_draw[0].height(); else aspect = 1;
-
         if (aspect != 0) rect_physical[0].setY(rect_physical[0].x() / aspect); else rect_physical[0].setY(0);
-
+*/
+        if (rect_draw[0].width() != 0) rect_physical[0].setY(((double)rect_physical[0].x() * (double)rect_draw[0].height() / (double)rect_draw[0].width()));
+        else rect_physical[0].setY(0);
+//        qDebug("%d %d %d %d", rect_draw[0].width(), rect_draw[0].height(), rect_physical[0].x(), rect_physical[0].y());
         ui->plainTextEditRect1Y->setPlainText(QString("%1").arg(rect_physical[0].y(), 5, 'f', 3));
         set_other_Rect(0);
     }
@@ -286,11 +334,14 @@ void MainWindow::onSetRect1Y()
 {
     rect_physical[0].setY(ui->plainTextEditRect1Y->toPlainText().toDouble());
     if (rect_physical[0].y() != 0){
-        double aspect;
         normalize_rect_size();
+/*
+        double aspect;
         if (rect_draw[0].height() != 0) aspect = (double)rect_draw[0].width() / (double)rect_draw[0].height(); else aspect = 1;
-
         if (aspect != 0) rect_physical[0].setX(rect_physical[0].y() * aspect); else rect_physical[0].setX(0);
+*/
+        if (rect_draw[0].height() != 0) rect_physical[0].setX(((double)rect_physical[0].y() * (double)rect_draw[0].width() / (double)rect_draw[0].height()));
+        else rect_physical[0].setX(0);
 
         ui->plainTextEditRect1X->setPlainText(QString("%1").arg(rect_physical[0].x(), 5, 'f', 3));
         set_other_Rect(0);
@@ -301,12 +352,14 @@ void MainWindow::onSetRect2X()
 {
     rect_physical[1].setX(ui->plainTextEditRect2X->toPlainText().toDouble());
     if (rect_physical[1].x() != 0){
-        double aspect;
         normalize_rect_size();
-
+/*
+        double aspect;
         if (rect_draw[1].height() != 0) aspect = (double)rect_draw[1].width() / (double)rect_draw[1].height(); else aspect = 1;
-
         if (aspect != 0) rect_physical[1].setY(rect_physical[1].x() / aspect); else rect_physical[1].setY(0);
+*/
+        if (rect_draw[1].width() != 0) rect_physical[1].setY(((double)rect_physical[1].x() * (double)rect_draw[1].height() / (double)rect_draw[1].width()));
+        else rect_physical[1].setY(0);
 
         ui->plainTextEditRect2Y->setPlainText(QString("%1").arg(rect_physical[1].y(), 5, 'f', 3));
         set_other_Rect(1);
@@ -317,14 +370,44 @@ void MainWindow::onSetRect2Y()
 {
     rect_physical[1].setY(ui->plainTextEditRect2Y->toPlainText().toDouble());
     if (rect_physical[1].y() != 0){
-        double aspect;
         normalize_rect_size();
-
+/*
+        double aspect;
         if (rect_draw[1].height() != 0) aspect = (double)rect_draw[1].width() / (double)rect_draw[1].height(); else aspect = 1;
-
         if (aspect != 0) rect_physical[1].setX(rect_physical[1].y() * aspect); else rect_physical[1].setX(0);
+*/
+        if (rect_draw[1].height() != 0) rect_physical[1].setX(((double)rect_physical[1].y() * (double)rect_draw[1].width() / (double)rect_draw[1].height()));
+        else rect_physical[1].setX(0);
 
         ui->plainTextEditRect2X->setPlainText(QString("%1").arg(rect_physical[1].x(), 5, 'f', 3));
         set_other_Rect(1);
+    }
+}
+
+void MainWindow::onRotateChanged()
+{
+    rotate = ui->plainTextEditRotate->toPlainText().toDouble();
+    update();
+}
+
+void MainWindow::onRect1ColorClicked()
+{
+    QColor color = QColorDialog::getColor();
+    if(color.isValid()){
+        pen_color[0] = color;
+        QPalette pal;
+        pal.setColor(QPalette::Button, color);
+        ui->pushButtonRect1Color->setPalette(pal);
+    }
+}
+
+void MainWindow::onRect2ColorClicked()
+{
+    QColor color = QColorDialog::getColor();
+    if(color.isValid()){
+        pen_color[1] = color;
+        QPalette pal;
+        pal.setColor(QPalette::Button, color);
+        ui->pushButtonRect2Color->setPalette(pal);
     }
 }

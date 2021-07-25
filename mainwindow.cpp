@@ -32,10 +32,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pushButtonRect1Color->setPalette(pal);
     pal.setColor(QPalette::Button, pen_color[1]);
     ui->pushButtonRect2Color->setPalette(pal);
-
+/*
     imageFile = QImage("/Users/akita/Desktop/VHX_000218a.jpg");
     fImageLoaded = true;
     ui->SliderZoom->setEnabled(true);
+    mag = 2;
+*/
 }
 
 // 描画時のpaintイベント
@@ -56,7 +58,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::paintEvent(QPaintEvent *event){
     QPainter painter(this);
-    int imageWidth, imageHeight, drawingWidth, drawingHeight;
 
     // centralWidgetへ配置したオブジェクトのサイズを、MainWindowのサイズに合わせて自動調整
     // https://tips.crosslaboratory.com/post/qt_widget_size_does_not_change/
@@ -76,7 +77,7 @@ void MainWindow::paintEvent(QPaintEvent *event){
 //        img.convertFromImage(imageFile);
         QImage img = QImage(imageFile);
         imageWidth = img.width(); imageHeight = img.height();
-        img = img.scaled(imageWidth * mag, imageHeight * mag, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+//        img = img.scaled(imageWidth * mag, imageHeight * mag, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
 //        for (int i = 0; i < 100; i++) img.setPixel(i, i, pen_color[0]);
 
@@ -89,6 +90,7 @@ void MainWindow::paintEvent(QPaintEvent *event){
         // shttps://base64.work/so/qt/1908471
         QPoint center = img.rect().center();
         QTransform matrix;
+        matrix.scale(mag, mag);
         matrix.translate(center.x(), center.y());
         matrix.rotate(rotate);
         img = img.transformed(matrix);
@@ -108,19 +110,96 @@ void MainWindow::paintEvent(QPaintEvent *event){
          <--W-->     <--W*mag-->    W=imageWidth, Y=drawingWidth
          +-----+  -> +---------+
                      +-Y-+        hScroll=0.0
-                           +-Y-+  hScroll=1.0
-                          posX
+                        +-Y-+     hScroll=0.5
+                        ^  +-Y-+  hScroll=1.0
+                        posX
          */
-//        qDebug("%d %d / %d %d / %.1f / %d %d / %d", drawingWidth, drawingHeight, imageWidth, imageHeight, mag, posX, posY, fDragging);
+
+        qDebug("%d %d / %d %d / %.1f / %d %d / I(%d %d)-(%d %d) D(%d %d)-(%d %d)",
+               drawingWidth, drawingHeight, imageWidth, imageHeight, mag, posX, posY,
+               rect_draw[0].left(), rect_draw[0].top(), rect_draw[0].right(), rect_draw[0].bottom(),
+               conv_image_to_drawing(rect_draw[0]).left(),
+                conv_image_to_drawing(rect_draw[0]).top(),
+                conv_image_to_drawing(rect_draw[0]).right(),
+                conv_image_to_drawing(rect_draw[0]).bottom());
     }
-    // xw@Window(Y) <-> xi@Image(W*mag) -> xi = posX + xw / Y * (W*mag) -> xw = (xi - posX) * Y / (W*mag)
     painter.setPen(pen_color[0]);
-    painter.drawRect(rect_draw[0]);
+//    painter.drawRect(rect_draw[0]);
+    painter.drawRect(conv_image_to_drawing(rect_draw[0]));
     painter.setPen(pen_color[1]);
-    painter.drawRect(rect_draw[1]);
+//    painter.drawRect(rect_draw[1]);
+    painter.drawRect(conv_image_to_drawing(rect_draw[1]));
 }
 
+// 矩形を描画後に拡大縮小するときの矩形の拡大縮小がどうもうまくいかないので，とりあえず矩形は拡大縮小しない
 
+/*
+<--W-->     <--W*mag-->    W=imageWidth, Y=drawingWidth
++-----+  -> +---------+
+               +-Y-+
+               posX
+
+            <----W*mag2---->
+         -> +--------------+
+                 +-Y-+
+                 posX
+
+*/
+
+// xd@Drawing(Y) <-> xi@Image(W*mag)
+//   -> xi = posX + xd / Y * (W*mag)
+//   -> xd = (xi - posX) * Y / (W*mag)
+QRect MainWindow::conv_drawing_to_image(QRect p)
+{
+    QRect pt;
+/*
+    pt.setLeft(posX + p.x() / (double)drawingWidth * (double)(imageWidth * mag));
+    pt.setRight(pt.left() + imageWidth);
+    pt.setTop(posY + p.y() / (double)drawingHeight * (double)(imageHeight * mag));
+    pt.setBottom(pt.top() + imageHeight);
+*/
+    pt.setTopLeft(conv_drawing_to_image_p(p.topLeft()));
+    pt.setBottomRight(conv_drawing_to_image_p(p.bottomRight()));
+    return(pt);
+}
+
+QRect MainWindow::conv_image_to_drawing(QRect p)
+{
+    QRect pt;
+/*
+    pt.setLeft((p.x() - posX) * (double)drawingWidth / (double)(imageWidth * mag));
+    pt.setRight(pt.left() + drawingWidth);
+    pt.setTop((p.y() - posY) * (double)drawingHeight / (double)(imageHeight * mag));
+    pt.setBottom(pt.top() + drawingHeight);
+*/
+    pt.setTopLeft(conv_image_to_drawing_p(p.topLeft()));
+    pt.setBottomRight(conv_image_to_drawing_p(p.bottomRight()));
+    return(pt);
+}
+
+QPoint MainWindow::conv_drawing_to_image_p(QPoint p)
+{
+    QPoint pt;
+    pt.setX(posX + p.x());
+    pt.setY(posY + p.y());
+//    pt.setX(posX + p.x() / (double)drawingWidth * (double)(imageWidth * mag));
+//    pt.setY(posY + p.y() / (double)drawingHeight * (double)(imageHeight * mag));
+//    pt.setX(posX + p.x() * (double)drawingWidth / (double)(imageWidth * mag));
+//    pt.setY(posY + p.y() * (double)drawingHeight / (double)(imageHeight * mag));
+    return(pt);
+}
+
+QPoint MainWindow::conv_image_to_drawing_p(QPoint p)
+{
+    QPoint pt;
+    pt.setX(p.x() - posX);
+    pt.setY(p.y() - posY);
+//    pt.setX((p.x() - posX) * (double)drawingWidth / (double)(imageWidth * mag));
+//    pt.setY((p.y() - posY) * (double)drawingHeight / (double)(imageHeight * mag));
+//    pt.setX((p.x() - posX) / (double)drawingWidth * (double)(imageWidth * mag));
+//    pt.setY((p.y() - posY) / (double)drawingHeight * (double)(imageHeight * mag));
+    return(pt);
+}
 
 // *.hで宣言した独自のスロットはここで定義
 void MainWindow::OpenFileDialog()
@@ -162,7 +241,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         int drawingHeight = ui->horizontalLayout->geometry().height();
         if (event->position().y() < drawingHeight){
             //        qDebug("MousePress x=%f,y=%f", event->position().x(), event->position().y());
-            QPoint mouseP = event->position().toPoint();
+            QPoint mouseP = conv_drawing_to_image_p(event->position().toPoint());
             dragMode = 0;
             for (int i = 0; i < 2; i++){
                 int dL, dR, dT, dB;
@@ -176,8 +255,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 else if (dT < TH_DRAG && check_within(mouseP.x(), rect_draw[i].left(), rect_draw[i].right())) dragMode = 3 + i * 10;
                 else if (dB < TH_DRAG && check_within(mouseP.x(), rect_draw[i].left(), rect_draw[i].right())) dragMode = 4 + i * 10;
             }
-//            qDebug("set dragMode = %d", dragMode);
-            if (dragMode == 0) rect_draw[index].setTopLeft(event->position().toPoint());
+            if (dragMode == 0) rect_draw[index].setTopLeft(mouseP);
+            qDebug("%d p[%d %d] m[%f %f] D[%d %d] r[%d %d]", dragMode,
+                   posX, posY,
+                   event->position().x(), event->position().y(),
+                   mouseP.x(), mouseP.y(),
+                   rect_draw[index].left(), rect_draw[index].top());
         }
     }
 }
@@ -204,17 +287,17 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     // ステータスバーに表示
     // http://memotiyou.blogspot.com/2012/03/qt-c_238.html
     ui->statusbar->showMessage(QString("(%1 %2)").arg(event->position().x()).arg(event->position().y()));
+    QPoint mouseP = conv_drawing_to_image_p(event->position().toPoint());
 
-    if (dragMode == 0) rect_draw[index].setBottomRight(event->position().toPoint());
-    else if (dragMode == 1) rect_draw[0].setLeft(event->position().x());
-    else if (dragMode == 2) rect_draw[0].setRight(event->position().x());
-    else if (dragMode == 3) rect_draw[0].setTop(event->position().y());
-    else if (dragMode == 4) rect_draw[0].setBottom(event->position().y());
-    else if (dragMode == 11) rect_draw[1].setLeft(event->position().x());
-    else if (dragMode == 12) rect_draw[1].setRight(event->position().x());
-    else if (dragMode == 13) rect_draw[1].setTop(event->position().y());
-    else if (dragMode == 14) rect_draw[1].setBottom(event->position().y());
-
+    if (dragMode == 0) rect_draw[index].setBottomRight(mouseP);
+    else if (dragMode == 1) rect_draw[0].setLeft(mouseP.x());
+    else if (dragMode == 2) rect_draw[0].setRight(mouseP.x());
+    else if (dragMode == 3) rect_draw[0].setTop(mouseP.y());
+    else if (dragMode == 4) rect_draw[0].setBottom(mouseP.y());
+    else if (dragMode == 11) rect_draw[1].setLeft(mouseP.x());
+    else if (dragMode == 12) rect_draw[1].setRight(mouseP.x());
+    else if (dragMode == 13) rect_draw[1].setTop(mouseP.y());
+    else if (dragMode == 14) rect_draw[1].setBottom(mouseP.y());
 
     int width = rect_draw[index].right() - rect_draw[index].left() + 1; if (width < 0) width = -width;
     int height = rect_draw[index].bottom() - rect_draw[index].top() + 1; if (height < 0) height = -height;

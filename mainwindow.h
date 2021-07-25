@@ -40,6 +40,11 @@ private:
     int dragMode;
     bool check_within(int x, int xs, int xe);
     QColor pen_color[2];
+    QRect conv_drawing_to_image(QRect p);
+    QRect conv_image_to_drawing(QRect p);
+    QPoint conv_drawing_to_image_p(QPoint p);
+    QPoint conv_image_to_drawing_p(QPoint p);
+    int imageWidth, imageHeight, drawingWidth, drawingHeight;
 
 public slots:
     // 独自のスロット（ボタンを押したときに呼ばれる関数など）はここで宣言

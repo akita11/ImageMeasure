@@ -45,6 +45,7 @@ private:
     QPoint conv_drawing_to_image_p(QPoint p);
     QPoint conv_image_to_drawing_p(QPoint p);
     int imageWidth, imageHeight, drawingWidth, drawingHeight;
+    int Nrect = 2;
 
 public slots:
     // 独自のスロット（ボタンを押したときに呼ばれる関数など）はここで宣言

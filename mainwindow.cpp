@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     index = 0;
     rotate = 0;
     dragMode = 0;
+    posX = 0; posY = 0;
     pen_color[0] = Qt::red;
     pen_color[1] = Qt::blue;
     QPalette pal;
@@ -103,8 +104,6 @@ void MainWindow::paintEvent(QPaintEvent *event){
         painter.setClipRegion(QRegion(0, 0, drawingWidth, drawingHeight));
 //        img.scroll(hScroll * imageWidth, vScroll * imageHeight, img.rect()); // scrollだと移動前のQPixmapが残る
 //        painter.drawPixmap(0, 0, img); // img at (0, 0)
-        posX = (int)((imageWidth * mag - drawingWidth) * hScroll);
-        posY = (int)((imageHeight * mag - drawingHeight) * vScroll);
         painter.drawImage(0, 0, img, posX, posY);
         /*
          <--W-->     <--W*mag-->    W=imageWidth, Y=drawingWidth
@@ -114,7 +113,7 @@ void MainWindow::paintEvent(QPaintEvent *event){
                         ^  +-Y-+  hScroll=1.0
                         posX
          */
-
+/*
         qDebug("%d %d / %d %d / %.1f / %d %d / I(%d %d)-(%d %d) D(%d %d)-(%d %d)",
                drawingWidth, drawingHeight, imageWidth, imageHeight, mag, posX, posY,
                rect_draw[0].left(), rect_draw[0].top(), rect_draw[0].right(), rect_draw[0].bottom(),
@@ -122,33 +121,14 @@ void MainWindow::paintEvent(QPaintEvent *event){
                 conv_image_to_drawing(rect_draw[0]).top(),
                 conv_image_to_drawing(rect_draw[0]).right(),
                 conv_image_to_drawing(rect_draw[0]).bottom());
+                */
     }
-    painter.setPen(pen_color[0]);
-//    painter.drawRect(rect_draw[0]);
-    painter.drawRect(conv_image_to_drawing(rect_draw[0]));
-    painter.setPen(pen_color[1]);
-//    painter.drawRect(rect_draw[1]);
-    painter.drawRect(conv_image_to_drawing(rect_draw[1]));
+    for (int i = 0; i < Nrect; i++){
+        painter.setPen(pen_color[i]);
+        painter.drawRect(conv_image_to_drawing(rect_draw[i]));
+    }
 }
 
-// 矩形を描画後に拡大縮小するときの矩形の拡大縮小がどうもうまくいかないので，とりあえず矩形は拡大縮小しない
-
-/*
-<--W-->     <--W*mag-->    W=imageWidth, Y=drawingWidth
-+-----+  -> +---------+
-               +-Y-+
-               posX
-
-            <----W*mag2---->
-         -> +--------------+
-                 +-Y-+
-                 posX
-
-*/
-
-// xd@Drawing(Y) <-> xi@Image(W*mag)
-//   -> xi = posX + xd / Y * (W*mag)
-//   -> xd = (xi - posX) * Y / (W*mag)
 QRect MainWindow::conv_drawing_to_image(QRect p)
 {
     QRect pt;
@@ -162,7 +142,6 @@ QRect MainWindow::conv_drawing_to_image(QRect p)
     pt.setBottomRight(conv_drawing_to_image_p(p.bottomRight()));
     return(pt);
 }
-
 QRect MainWindow::conv_image_to_drawing(QRect p)
 {
     QRect pt;
@@ -176,28 +155,18 @@ QRect MainWindow::conv_image_to_drawing(QRect p)
     pt.setBottomRight(conv_image_to_drawing_p(p.bottomRight()));
     return(pt);
 }
-
 QPoint MainWindow::conv_drawing_to_image_p(QPoint p)
 {
     QPoint pt;
     pt.setX(posX + p.x());
     pt.setY(posY + p.y());
-//    pt.setX(posX + p.x() / (double)drawingWidth * (double)(imageWidth * mag));
-//    pt.setY(posY + p.y() / (double)drawingHeight * (double)(imageHeight * mag));
-//    pt.setX(posX + p.x() * (double)drawingWidth / (double)(imageWidth * mag));
-//    pt.setY(posY + p.y() * (double)drawingHeight / (double)(imageHeight * mag));
     return(pt);
 }
-
 QPoint MainWindow::conv_image_to_drawing_p(QPoint p)
 {
     QPoint pt;
     pt.setX(p.x() - posX);
     pt.setY(p.y() - posY);
-//    pt.setX((p.x() - posX) * (double)drawingWidth / (double)(imageWidth * mag));
-//    pt.setY((p.y() - posY) * (double)drawingHeight / (double)(imageHeight * mag));
-//    pt.setX((p.x() - posX) / (double)drawingWidth * (double)(imageWidth * mag));
-//    pt.setY((p.y() - posY) / (double)drawingHeight * (double)(imageHeight * mag));
     return(pt);
 }
 
@@ -243,7 +212,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
             //        qDebug("MousePress x=%f,y=%f", event->position().x(), event->position().y());
             QPoint mouseP = conv_drawing_to_image_p(event->position().toPoint());
             dragMode = 0;
-            for (int i = 0; i < 2; i++){
+            for (int i = 0; i < Nrect; i++){
                 int dL, dR, dT, dB;
                 dL = abs(mouseP.x() - rect_draw[i].left());
                 dR = abs(mouseP.x() - rect_draw[i].right());
@@ -256,11 +225,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 else if (dB < TH_DRAG && check_within(mouseP.x(), rect_draw[i].left(), rect_draw[i].right())) dragMode = 4 + i * 10;
             }
             if (dragMode == 0) rect_draw[index].setTopLeft(mouseP);
+/*
             qDebug("%d p[%d %d] m[%f %f] D[%d %d] r[%d %d]", dragMode,
                    posX, posY,
                    event->position().x(), event->position().y(),
                    mouseP.x(), mouseP.y(),
                    rect_draw[index].left(), rect_draw[index].top());
+*/
         }
     }
 }
@@ -270,10 +241,9 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton) {
         int drawingHeight = ui->horizontalLayout->geometry().height();
         if (event->position().y() < drawingHeight){
-//            if (drawMode == 0) rect_draw[index].setBottomRight(event->position().toPoint());
+            dragMode = 0;
         }
 //        qDebug("MouseRelease x=%f,y=%f", event->position().x(), event->position().y());
-        dragMode = 0;
     }
 }
 
@@ -344,29 +314,30 @@ void MainWindow::onSliderZoomChanged(int value)
     // 10^(-2)    10^(0)   10^(2)
     //    double p = ((double)(value - 50) / 50.0) * 2.0;
     double p = ((double)(value - 50) / 50.0) * 1.0; // x0.1 - x10
+    double mag0 = mag;
     mag = pow(10.0, p);
     // QStringで小数（桁数指定）のフォーマット
     // https://sites.google.com/site/ubuntsdeqthajimemashita/qstringno-shu-shi-she-ding
     ui->labelZoom->setText(QString("x%1").arg(mag, 4, 'f', 2));
-//    QTransform trans = QTransform();
-//    trans.scale(m/mag, m/mag);
-//    imageFile_item->setTransform(trans);
+    for (int i = 0; i < 2; i++){
+        rect_draw[i].setLeft(rect_draw[i].left() / mag0 * mag);
+        rect_draw[i].setTop(rect_draw[i].top() / mag0 * mag);
+        rect_draw[i].setRight(rect_draw[i].right() / mag0 * mag);
+        rect_draw[i].setBottom(rect_draw[i].bottom() / mag0 * mag);
+    }
     update();
-}
-
-void MainWindow::onRadiobuttonClicked()
-{
-    if (ui->radioButtonRect1->isChecked() == true) index = 0; else index = 1;
 }
 
 void MainWindow::onHorizontalScrollBarChanged(int value)
 {
     hScroll = (double)(value - ui->horizontalScrollBar->minimum())/ (ui->horizontalScrollBar->maximum() - ui->horizontalScrollBar->minimum());
+    posX = (int)((imageWidth * mag - drawingWidth) * hScroll);
     update();
 }
 void MainWindow::onVerticalScrollBarChanged(int value)
 {
     vScroll = (double)(value - ui->verticalScrollBar->minimum()) / (ui->verticalScrollBar->maximum() - ui->verticalScrollBar->minimum());
+    posY = (int)((imageHeight * mag - drawingHeight) * vScroll);
     update();
 }
 
@@ -385,11 +356,10 @@ void MainWindow::set_other_Rect(int index)
         ui->plainTextEditRect1Y->setPlainText(QString("%1").arg(rect_physical[index].y() / rect_ratio_y, 5, 'f', 3));
     }
 }
-
 void MainWindow::normalize_rect_size()
 {
     int i;
-    for (i = 0; i < 2; i++){
+    for (i = 0; i < Nrect; i++){
         if (rect_draw[i].width() < 0) rect_draw[i].setWidth(-rect_draw[i].width());
         if (rect_draw[i].height() < 0) rect_draw[i].setHeight(-rect_draw[i].height());
     }
@@ -400,19 +370,12 @@ void MainWindow::onSetRect1X()
     rect_physical[0].setX(ui->plainTextEditRect1X->toPlainText().toDouble());
     if (rect_physical[0].x() != 0){
         normalize_rect_size();
-/*
-        double aspect;
-        if (rect_draw[0].height() != 0) aspect = (double)rect_draw[0].width() / (double)rect_draw[0].height(); else aspect = 1;
-        if (aspect != 0) rect_physical[0].setY(rect_physical[0].x() / aspect); else rect_physical[0].setY(0);
-*/
         if (rect_draw[0].width() != 0) rect_physical[0].setY(((double)rect_physical[0].x() * (double)rect_draw[0].height() / (double)rect_draw[0].width()));
         else rect_physical[0].setY(0);
-//        qDebug("%d %d %d %d", rect_draw[0].width(), rect_draw[0].height(), rect_physical[0].x(), rect_physical[0].y());
         ui->plainTextEditRect1Y->setPlainText(QString("%1").arg(rect_physical[0].y(), 5, 'f', 3));
         set_other_Rect(0);
     }
 }
-
 void MainWindow::onSetRect1Y()
 {
     rect_physical[0].setY(ui->plainTextEditRect1Y->toPlainText().toDouble());
@@ -430,7 +393,6 @@ void MainWindow::onSetRect1Y()
         set_other_Rect(0);
     }
 }
-
 void MainWindow::onSetRect2X()
 {
     rect_physical[1].setX(ui->plainTextEditRect2X->toPlainText().toDouble());
@@ -448,7 +410,6 @@ void MainWindow::onSetRect2X()
         set_other_Rect(1);
     }
 }
-
 void MainWindow::onSetRect2Y()
 {
     rect_physical[1].setY(ui->plainTextEditRect2Y->toPlainText().toDouble());
@@ -473,6 +434,10 @@ void MainWindow::onRotateChanged()
     update();
 }
 
+void MainWindow::onRadiobuttonClicked()
+{
+    if (ui->radioButtonRect1->isChecked() == true) index = 0; else index = 1;
+}
 void MainWindow::onRect1ColorClicked()
 {
     QColor color = QColorDialog::getColor();
@@ -483,7 +448,6 @@ void MainWindow::onRect1ColorClicked()
         ui->pushButtonRect1Color->setPalette(pal);
     }
 }
-
 void MainWindow::onRect2ColorClicked()
 {
     QColor color = QColorDialog::getColor();
